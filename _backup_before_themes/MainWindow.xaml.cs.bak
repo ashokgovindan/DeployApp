@@ -1,0 +1,320 @@
+using System.Collections.ObjectModel;
+using System.Text;
+using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Input;
+using DeployApp.Models;
+using DeployApp.Services;
+
+namespace DeployApp
+{
+    /// <summary>
+    /// Interaction logic for MainWindow.xaml
+    /// </summary>
+    public partial class MainWindow : Window
+    {
+        private const string CurrentUser = "PLS7282 - Ashok Govindan";
+
+        private readonly ObservableCollection<DeploymentRequest> _allRequests = new();
+        private readonly DatabaseService _dbService = new();
+        private readonly ServiceNowService _snowService = new();
+        private List<string> _rpaNames = new();
+
+        public MainWindow()
+        {
+            InitializeComponent();
+            InitializeDatabase();
+            LoadDataFromDatabase();
+            RefreshGrid();
+        }
+
+        /// <summary>
+        /// Initializes the Access database, creating the .accdb file and tables if needed.
+        /// </summary>
+        private void InitializeDatabase()
+        {
+            try
+            {
+                _dbService.Initialize();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(
+                    $"Failed to initialize the database:\n\n{ex.Message}\n\nDatabase path: {_dbService.DatabasePath}",
+                    "Database Error", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+        }
+
+        /// <summary>
+        /// Loads all deployment requests from the Access database into the in-memory collection.
+        /// Also refreshes the RPA names list.
+        /// </summary>
+        private void LoadDataFromDatabase()
+        {
+            try
+            {
+                _allRequests.Clear();
+                var records = _dbService.LoadAll();
+                foreach (var record in records)
+                {
+                    _allRequests.Add(record);
+                }
+
+                _rpaNames = _dbService.LoadRpaNames();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(
+                    $"Failed to load data from database:\n\n{ex.Message}",
+                    "Database Error", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+        }
+
+        /// <summary>
+        /// Refreshes the data grid to show only open (non-closed) requests.
+        /// </summary>
+        private void RefreshGrid()
+        {
+            var closedStatuses = new[] { "Deployed", "Failed", "Rolled Back", "Cancelled" };
+            var openRequests = _allRequests
+                .Where(r => !closedStatuses.Contains(r.Status))
+                .ToList();
+
+            DgDeployments.ItemsSource = openRequests;
+
+            int openCount = openRequests.Count;
+            int withoutRitm = openRequests.Count(r => string.IsNullOrWhiteSpace(r.RitmNumber));
+            TxtStatusBar.Text = $"{openCount} open requests  -  {withoutRitm} without a RITM.  Closed requests are in the report.  Dates use yyyy-MM-dd.";
+        }
+
+        /// <summary>
+        /// Returns the list of checked deployment requests from the data grid.
+        /// </summary>
+        private List<DeploymentRequest> GetCheckedRequests()
+        {
+            if (DgDeployments.ItemsSource is not IEnumerable<DeploymentRequest> items)
+                return new List<DeploymentRequest>();
+
+            return items.Where(r => r.IsSelected).ToList();
+        }
+
+        #region Toolbar Handlers
+
+        private void BtnSubmitRequest_Click(object sender, RoutedEventArgs e)
+        {
+            var dialog = new DeploymentRequestWindow(CurrentUser, _rpaNames)
+            {
+                Owner = this
+            };
+
+            if (dialog.ShowDialog() == true && dialog.Result != null)
+            {
+                try
+                {
+                    _dbService.Insert(dialog.Result);
+                    _allRequests.Add(dialog.Result);
+                    RefreshGrid();
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show($"Failed to save to database:\n\n{ex.Message}",
+                        "Database Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                }
+            }
+        }
+
+        private void BtnEdit_Click(object sender, RoutedEventArgs e)
+        {
+            EditSelectedRequest();
+        }
+
+        private void DgDeployments_MouseDoubleClick(object sender, MouseButtonEventArgs e)
+        {
+            EditSelectedRequest();
+        }
+
+        private void EditSelectedRequest()
+        {
+            if (DgDeployments.SelectedItem is not DeploymentRequest selected)
+            {
+                MessageBox.Show("Please select a deployment request to edit.", "Edit",
+                    MessageBoxButton.OK, MessageBoxImage.Information);
+                return;
+            }
+
+            var dialog = new DeploymentRequestWindow(CurrentUser, _rpaNames, selected)
+            {
+                Owner = this
+            };
+
+            if (dialog.ShowDialog() == true && dialog.Result != null)
+            {
+                try
+                {
+                    selected.CopyFrom(dialog.Result);
+                    _dbService.Update(selected);
+                    RefreshGrid();
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show($"Failed to update database:\n\n{ex.Message}",
+                        "Database Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                }
+            }
+        }
+
+        private void BtnRemoveSelected_Click(object sender, RoutedEventArgs e)
+        {
+            if (DgDeployments.SelectedItem is not DeploymentRequest selected)
+            {
+                MessageBox.Show("Please select a deployment request to remove.", "Remove",
+                    MessageBoxButton.OK, MessageBoxImage.Information);
+                return;
+            }
+
+            var result = MessageBox.Show(
+                $"Remove deployment request \"{selected.Deployment}\" for {selected.RpaName}?",
+                "Confirm Removal", MessageBoxButton.YesNo, MessageBoxImage.Question);
+
+            if (result == MessageBoxResult.Yes)
+            {
+                try
+                {
+                    _dbService.Delete(selected.Id);
+                    _allRequests.Remove(selected);
+                    RefreshGrid();
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show($"Failed to delete from database:\n\n{ex.Message}",
+                        "Database Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                }
+            }
+        }
+
+        private void BtnRefresh_Click(object sender, RoutedEventArgs e)
+        {
+            LoadDataFromDatabase();
+            RefreshGrid();
+        }
+
+        private void BtnClosedReport_Click(object sender, RoutedEventArgs e)
+        {
+            var dialog = new ClosedDeploymentsWindow(_allRequests)
+            {
+                Owner = this
+            };
+            dialog.ShowDialog();
+        }
+
+        #endregion
+
+        #region Checkbox Select All
+
+        private void ChkSelectAll_Click(object sender, RoutedEventArgs e)
+        {
+            if (sender is CheckBox chk && DgDeployments.ItemsSource is IEnumerable<DeploymentRequest> items)
+            {
+                bool isChecked = chk.IsChecked == true;
+                foreach (var item in items)
+                {
+                    item.IsSelected = isChecked;
+                }
+            }
+        }
+
+        #endregion
+
+        #region Create CR (ServiceNow Change Request)
+
+        private async void BtnCreateCR_Click(object sender, RoutedEventArgs e)
+        {
+            var checkedItems = GetCheckedRequests();
+
+            if (checkedItems.Count == 0)
+            {
+                MessageBox.Show("Please check one or more deployment requests to create a Change Request.",
+                    "Create CR", MessageBoxButton.OK, MessageBoxImage.Information);
+                return;
+            }
+
+            // Validate that all checked items have a Change Date
+            var missingDate = checkedItems.Where(r => string.IsNullOrWhiteSpace(r.ChangeDate)).ToList();
+            if (missingDate.Count > 0)
+            {
+                var names = string.Join("\n", missingDate.Select(r => $"  • {r.RpaName} ({r.Deployment})"));
+                MessageBox.Show(
+                    $"The following requests are missing a Change Date (required to schedule at 10 PM):\n\n{names}\n\nPlease edit these requests and set a Change Date first.",
+                    "Missing Change Date", MessageBoxButton.OK, MessageBoxImage.Warning);
+                return;
+            }
+
+            // Ensure ServiceNow config is available
+            var config = ServiceNowService.LoadConfig();
+            if (config == null || string.IsNullOrWhiteSpace(config.InstanceUrl))
+            {
+                var configDialog = new ServiceNowConfigWindow { Owner = this };
+                if (configDialog.ShowDialog() != true || configDialog.Result == null)
+                    return;
+                config = configDialog.Result;
+            }
+
+            // Confirm
+            var confirmMsg = $"Create {checkedItems.Count} Change Request(s) in ServiceNow?\n\n" +
+                             $"Instance: {config.InstanceUrl}\n" +
+                             $"Each will be scheduled at 10:00 PM on its Change Date.";
+            if (MessageBox.Show(confirmMsg, "Confirm CR Creation",
+                    MessageBoxButton.YesNo, MessageBoxImage.Question) != MessageBoxResult.Yes)
+                return;
+
+            // Create CRs
+            IsEnabled = false;
+            var results = new StringBuilder();
+            int successCount = 0;
+
+            foreach (var request in checkedItems)
+            {
+                var result = await _snowService.CreateChangeRequestAsync(config, request);
+                if (result.Success)
+                {
+                    successCount++;
+                    request.ChangeNumber = result.ChangeNumber;
+
+                    // Persist the Change # back to the database
+                    try
+                    {
+                        _dbService.Update(request);
+                    }
+                    catch { /* best-effort DB update */ }
+
+                    results.AppendLine($"✔ {request.RpaName}: {result.ChangeNumber}");
+                }
+                else
+                {
+                    results.AppendLine($"✘ {request.RpaName}: {result.Message}");
+                }
+            }
+
+            IsEnabled = true;
+            RefreshGrid();
+
+            MessageBox.Show(
+                $"Results: {successCount}/{checkedItems.Count} created successfully.\n\n{results}",
+                "Create CR - Results",
+                MessageBoxButton.OK,
+                successCount == checkedItems.Count ? MessageBoxImage.Information : MessageBoxImage.Warning);
+        }
+
+        #endregion
+
+        #region Create EPAL (Placeholder)
+
+        private void BtnCreateEPAL_Click(object sender, RoutedEventArgs e)
+        {
+            MessageBox.Show("Create EPAL functionality is not yet implemented.",
+                "Create EPAL", MessageBoxButton.OK, MessageBoxImage.Information);
+        }
+
+        #endregion
+    }
+}

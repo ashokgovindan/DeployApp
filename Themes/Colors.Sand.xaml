@@ -1,0 +1,50 @@
+<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <!-- Sand theme palette. Every theme defines the same keys. -->
+    <SolidColorBrush x:Key="WindowBackgroundBrush" Color="#F5F1EA"/>
+    <SolidColorBrush x:Key="TitleBarBrush" Color="#F5F1EA"/>
+    <SolidColorBrush x:Key="SurfaceBrush" Color="#FFFDF9"/>
+    <SolidColorBrush x:Key="SurfaceAltBrush" Color="#FAF6EF"/>
+    <SolidColorBrush x:Key="HeaderBrush" Color="#EDE5D8"/>
+    <SolidColorBrush x:Key="HeaderForegroundBrush" Color="#8A4F24"/>
+    <SolidColorBrush x:Key="TextPrimaryBrush" Color="#2E2A24"/>
+    <SolidColorBrush x:Key="TextSecondaryBrush" Color="#7A7064"/>
+    <SolidColorBrush x:Key="AccentBrush" Color="#9A5B2E"/>
+    <SolidColorBrush x:Key="AccentForegroundBrush" Color="#FFFFFF"/>
+    <SolidColorBrush x:Key="AccentSoftBrush" Color="#F1E2D3"/>
+    <SolidColorBrush x:Key="InputBackgroundBrush" Color="#FFFFFF"/>
+    <SolidColorBrush x:Key="InputReadOnlyBackgroundBrush" Color="#F3EEE6"/>
+    <SolidColorBrush x:Key="InputBorderBrush" Color="#D8CCBA"/>
+    <SolidColorBrush x:Key="InputHoverBorderBrush" Color="#BFAE95"/>
+    <SolidColorBrush x:Key="InputFocusBorderBrush" Color="#9A5B2E"/>
+    <SolidColorBrush x:Key="PlaceholderBrush" Color="#A89E90"/>
+    <SolidColorBrush x:Key="GridLineBrush" Color="#EDE6DA"/>
+    <SolidColorBrush x:Key="RowHoverBrush" Color="#F7F0E6"/>
+    <SolidColorBrush x:Key="RowSelectedBrush" Color="#F1E2D3"/>
+    <SolidColorBrush x:Key="PrimaryButtonBrush" Color="#C2410C"/>
+    <SolidColorBrush x:Key="PrimaryButtonHoverBrush" Color="#A8380A"/>
+    <SolidColorBrush x:Key="PrimaryButtonPressedBrush" Color="#8F2F08"/>
+    <SolidColorBrush x:Key="PrimaryButtonForegroundBrush" Color="#FFFFFF"/>
+    <SolidColorBrush x:Key="SubmitButtonBrush" Color="#3F7D4E"/>
+    <SolidColorBrush x:Key="SubmitButtonHoverBrush" Color="#356A42"/>
+    <SolidColorBrush x:Key="SubmitButtonPressedBrush" Color="#2C5837"/>
+    <SolidColorBrush x:Key="SubmitButtonForegroundBrush" Color="#FFFFFF"/>
+    <SolidColorBrush x:Key="SecondaryButtonBrush" Color="#FFFDF9"/>
+    <SolidColorBrush x:Key="SecondaryButtonHoverBrush" Color="#F5EEE3"/>
+    <SolidColorBrush x:Key="SecondaryButtonPressedBrush" Color="#EDE2D2"/>
+    <SolidColorBrush x:Key="SecondaryButtonForegroundBrush" Color="#2E2A24"/>
+    <SolidColorBrush x:Key="SecondaryButtonBorderBrush" Color="#D8CCBA"/>
+    <SolidColorBrush x:Key="SuccessBrush" Color="#3F7D4E"/>
+    <SolidColorBrush x:Key="WarningBrush" Color="#B45309"/>
+    <SolidColorBrush x:Key="DangerBrush" Color="#B91C1C"/>
+    <SolidColorBrush x:Key="MutedBrush" Color="#8C8274"/>
+    <SolidColorBrush x:Key="ScrollThumbBrush" Color="#D8CCBA"/>
+    <SolidColorBrush x:Key="ScrollThumbHoverBrush" Color="#BFAE95"/>
+    <SolidColorBrush x:Key="PopupBackgroundBrush" Color="#FFFDF9"/>
+    <SolidColorBrush x:Key="PopupBorderBrush" Color="#D8CCBA"/>
+    <SolidColorBrush x:Key="ItemHoverBrush" Color="#F7F0E6"/>
+    <SolidColorBrush x:Key="ItemSelectedBrush" Color="#F1E2D3"/>
+    <SolidColorBrush x:Key="StatusBarBrush" Color="#EDE5D8"/>
+    <SolidColorBrush x:Key="StatusBarForegroundBrush" Color="#7A5A3C"/>
+    <Color x:Key="ShadowColor">#33503A20</Color>
+</ResourceDictionary>

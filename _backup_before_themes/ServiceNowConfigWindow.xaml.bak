@@ -1,0 +1,53 @@
+<Window x:Class="DeployApp.ServiceNowConfigWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="ServiceNow Configuration" Height="300" Width="480"
+        WindowStartupLocation="CenterOwner"
+        Background="{StaticResource PalestBlueBrush}"
+        ResizeMode="NoResize">
+
+    <Grid Margin="24,20,24,20">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="16"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <!-- Title -->
+        <TextBlock Grid.Row="0" Text="🔧  ServiceNow Connection" Style="{StaticResource SectionHeader}" FontSize="16"/>
+
+        <!-- Instance URL -->
+        <TextBlock Grid.Row="2" Text="Instance URL" Style="{StaticResource FormLabel}"/>
+        <TextBox x:Name="TxtInstanceUrl" Grid.Row="3" Style="{StaticResource FormTextBox}"
+                 Margin="0,0,0,10"/>
+
+        <!-- Username -->
+        <TextBlock Grid.Row="4" Text="Username" Style="{StaticResource FormLabel}"/>
+        <TextBox x:Name="TxtUsername" Grid.Row="5" Style="{StaticResource FormTextBox}"
+                 Margin="0,0,0,10"/>
+
+        <!-- Password -->
+        <TextBlock Grid.Row="6" Text="Password" Style="{StaticResource FormLabel}"/>
+        <PasswordBox x:Name="TxtPassword" Grid.Row="7" Padding="8,6" FontSize="12"
+                     BorderBrush="{StaticResource BorderGrayBrush}" BorderThickness="1"
+                     Background="White"/>
+
+        <!-- Buttons -->
+        <StackPanel Grid.Row="9" Orientation="Horizontal" HorizontalAlignment="Right">
+            <Button Style="{StaticResource SubmitButton}" Click="BtnSave_Click" Margin="0,0,10,0">
+                <StackPanel Orientation="Horizontal">
+                    <TextBlock Text="✔" Margin="0,0,6,0"/>
+                    <TextBlock Text="Save &amp; Connect"/>
+                </StackPanel>
+            </Button>
+            <Button Content="Cancel" Style="{StaticResource SecondaryButton}" Click="BtnCancel_Click"/>
+        </StackPanel>
+    </Grid>
+</Window>

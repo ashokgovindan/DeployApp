@@ -1,0 +1,50 @@
+using System.Globalization;
+using System.Windows;
+using System.Windows.Data;
+using System.Windows.Media;
+
+namespace DeployApp.Converters
+{
+    /// <summary>
+    /// Converts a status string to the appropriate foreground color.
+    /// Requested = Orange, Scheduled = Orange, Deployed = Green, Failed/Rolled Back/Cancelled = Red.
+    /// </summary>
+    public class StatusToColorConverter : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            var status = value as string ?? string.Empty;
+            return status switch
+            {
+                "Requested" => new SolidColorBrush(Color.FromRgb(232, 140, 0)),    // Orange
+                "Scheduled" => new SolidColorBrush(Color.FromRgb(232, 140, 0)),    // Orange
+                "Deployed" => new SolidColorBrush(Color.FromRgb(34, 139, 34)),     // Green
+                "Failed" => new SolidColorBrush(Color.FromRgb(200, 40, 40)),       // Red
+                "Rolled Back" => new SolidColorBrush(Color.FromRgb(200, 40, 40)),  // Red
+                "Cancelled" => new SolidColorBrush(Color.FromRgb(150, 150, 150)),  // Gray
+                _ => new SolidColorBrush(Colors.Black)
+            };
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            throw new NotImplementedException();
+        }
+    }
+
+    /// <summary>
+    /// Returns Visibility.Visible when the string is non-empty, Collapsed otherwise.
+    /// </summary>
+    public class StringToVisibilityConverter : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            return string.IsNullOrWhiteSpace(value as string) ? Visibility.Collapsed : Visibility.Visible;
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            throw new NotImplementedException();
+        }
+    }
+}

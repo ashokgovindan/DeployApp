@@ -1,0 +1,159 @@
+<Window x:Class="DeployApp.DeploymentRequestWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Deployment Manager" Height="520" Width="1030"
+        WindowStartupLocation="CenterOwner"
+        Background="{DynamicResource WindowBackgroundBrush}"
+        Foreground="{DynamicResource TextPrimaryBrush}"
+        ResizeMode="CanResizeWithGrip">
+
+    <Grid Margin="20,16,20,20">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <!-- Title -->
+        <StackPanel Grid.Row="0" Margin="0,0,0,4">
+            <TextBlock Text="📦  Deployment Request" Style="{StaticResource SectionHeader}" FontSize="18"/>
+            <TextBlock x:Name="SubtitleText" Text="Choose the RPA this deployment request belongs to."
+                       Style="{StaticResource SubtleText}" Margin="0,4,0,0"/>
+        </StackPanel>
+
+        <!-- Main Form Panel -->
+        <Border Grid.Row="2" Style="{StaticResource Card}" Padding="20,16" Margin="0,8,0,0">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>  <!-- Row 0: Top fields labels -->
+                    <RowDefinition Height="Auto"/>  <!-- Row 1: Top fields inputs -->
+                    <RowDefinition Height="12"/>    <!-- Row 2: Spacer -->
+                    <RowDefinition Height="Auto"/>  <!-- Row 3: Textarea labels -->
+                    <RowDefinition Height="*"/>     <!-- Row 4: Textareas -->
+                    <RowDefinition Height="12"/>    <!-- Row 5: Spacer -->
+                    <RowDefinition Height="Auto"/>  <!-- Row 6: Path labels -->
+                    <RowDefinition Height="Auto"/>  <!-- Row 7: Path inputs -->
+                    <RowDefinition Height="12"/>    <!-- Row 8: Spacer -->
+                    <RowDefinition Height="Auto"/>  <!-- Row 9: Bottom row labels -->
+                    <RowDefinition Height="Auto"/>  <!-- Row 10: Bottom row inputs -->
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="12"/>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="12"/>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="12"/>
+                    <ColumnDefinition Width="Auto" MinWidth="140"/>
+                    <ColumnDefinition Width="12"/>
+                    <ColumnDefinition Width="Auto" MinWidth="140"/>
+                </Grid.ColumnDefinitions>
+
+                <!-- Row 0: Labels for top fields -->
+                <TextBlock Grid.Row="0" Grid.Column="0" Text="RPA Name" Style="{StaticResource FormLabel}"/>
+                <TextBlock Grid.Row="0" Grid.Column="2" Text="Request Date" Style="{StaticResource FormLabel}"/>
+                <TextBlock Grid.Row="0" Grid.Column="4" Text="Change Date" Style="{StaticResource FormLabel}"/>
+                <TextBlock Grid.Row="0" Grid.Column="6" Text="Change #" Style="{StaticResource FormLabel}"/>
+                <TextBlock Grid.Row="0" Grid.Column="8" Text="RITM #" Style="{StaticResource FormLabel}"/>
+
+                <!-- Row 1: Top field inputs -->
+                <ComboBox x:Name="CmbRpaName" Grid.Row="1" Grid.Column="0" Style="{StaticResource FormComboBox}"
+                          IsEditable="False"/>
+
+                <DatePicker x:Name="DpRequestDate" Grid.Row="1" Grid.Column="2" Style="{StaticResource FormDatePicker}"/>
+                <DatePicker x:Name="DpChangeDate" Grid.Row="1" Grid.Column="4" Style="{StaticResource FormDatePicker}"/>
+                <TextBox x:Name="TxtChangeNumber" Grid.Row="1" Grid.Column="6" Style="{StaticResource FormTextBox}">
+                    <TextBox.Tag>Change number (optional)</TextBox.Tag>
+                </TextBox>
+                <TextBox x:Name="TxtRitmNumber" Grid.Row="1" Grid.Column="8" Style="{StaticResource FormTextBox}">
+                    <TextBox.Tag>RITM number (optional)</TextBox.Tag>
+                </TextBox>
+
+                <!-- Row 3: Textarea labels -->
+                <TextBlock Grid.Row="3" Grid.Column="0" Grid.ColumnSpan="3" Text="Change Description" Style="{StaticResource FormLabel}"/>
+                <TextBlock Grid.Row="3" Grid.Column="4" Text="Impact Analysis" Style="{StaticResource FormLabel}"/>
+                <TextBlock Grid.Row="3" Grid.Column="6" Grid.ColumnSpan="3" Text="Tasks to Deploy" Style="{StaticResource FormLabel}"/>
+
+                <!-- Row 4: Textareas -->
+                <TextBox x:Name="TxtChangeDescription" Grid.Row="4" Grid.Column="0" Grid.ColumnSpan="3"
+                         Style="{StaticResource FormTextBox}" AcceptsReturn="True" TextWrapping="Wrap"
+                         VerticalScrollBarVisibility="Auto" MinHeight="80"/>
+                <TextBox x:Name="TxtImpactAnalysis" Grid.Row="4" Grid.Column="4"
+                         Style="{StaticResource FormTextBox}" AcceptsReturn="True" TextWrapping="Wrap"
+                         VerticalScrollBarVisibility="Auto" MinHeight="80"/>
+                <TextBox x:Name="TxtTasksToDeploy" Grid.Row="4" Grid.Column="6" Grid.ColumnSpan="3"
+                         Style="{StaticResource FormTextBox}" AcceptsReturn="True" TextWrapping="Wrap"
+                         VerticalScrollBarVisibility="Auto" MinHeight="80"/>
+
+                <!-- Row 6: Path labels -->
+                <TextBlock Grid.Row="6" Grid.Column="0" Grid.ColumnSpan="3" Text="Test Plan/Log Path" Style="{StaticResource FormLabel}"/>
+                <TextBlock Grid.Row="6" Grid.Column="4" Text="Code Review Document Path" Style="{StaticResource FormLabel}"/>
+                <TextBlock Grid.Row="6" Grid.Column="6" Grid.ColumnSpan="3" Text="Code Analysis Path" Style="{StaticResource FormLabel}"/>
+
+                <!-- Row 7: Path inputs with browse buttons -->
+                <Grid Grid.Row="7" Grid.Column="0" Grid.ColumnSpan="3">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="Auto"/>
+                    </Grid.ColumnDefinitions>
+                    <TextBox x:Name="TxtTestPlanPath" Grid.Column="0" Style="{StaticResource FormTextBox}"/>
+                    <Button Grid.Column="1" Content="📁" Width="34" Margin="6,0,0,0"
+                            Style="{StaticResource SecondaryButton}" Padding="4,4" Click="BrowseTestPlan_Click"/>
+                </Grid>
+                <Grid Grid.Row="7" Grid.Column="4">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="Auto"/>
+                    </Grid.ColumnDefinitions>
+                    <TextBox x:Name="TxtCodeReviewPath" Grid.Column="0" Style="{StaticResource FormTextBox}"/>
+                    <Button Grid.Column="1" Content="📁" Width="34" Margin="6,0,0,0"
+                            Style="{StaticResource SecondaryButton}" Padding="4,4" Click="BrowseCodeReview_Click"/>
+                </Grid>
+                <Grid Grid.Row="7" Grid.Column="6" Grid.ColumnSpan="3">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="Auto"/>
+                    </Grid.ColumnDefinitions>
+                    <TextBox x:Name="TxtCodeAnalysisPath" Grid.Column="0" Style="{StaticResource FormTextBox}"/>
+                    <Button Grid.Column="1" Content="📁" Width="34" Margin="6,0,0,0"
+                            Style="{StaticResource SecondaryButton}" Padding="4,4" Click="BrowseCodeAnalysis_Click"/>
+                </Grid>
+
+                <!-- Row 9: Bottom row labels -->
+                <TextBlock Grid.Row="9" Grid.Column="0" Grid.ColumnSpan="3" Text="Code Moved to Test" Style="{StaticResource FormLabel}"/>
+                <TextBlock Grid.Row="9" Grid.Column="4" Text="Requested By" Style="{StaticResource FormLabel}"/>
+                <TextBlock Grid.Row="9" Grid.Column="6" Grid.ColumnSpan="3" Text="Status" Style="{StaticResource FormLabel}"/>
+
+                <!-- Row 10: Bottom row inputs -->
+                <ComboBox x:Name="CmbCodeMovedToTest" Grid.Row="10" Grid.Column="0" Grid.ColumnSpan="3"
+                          Style="{StaticResource FormComboBox}">
+                    <ComboBoxItem Content="No" IsSelected="True"/>
+                    <ComboBoxItem Content="Yes"/>
+                </ComboBox>
+                <TextBox x:Name="TxtRequestedBy" Grid.Row="10" Grid.Column="4"
+                         Style="{StaticResource FormTextBox}" IsReadOnly="True"/>
+                <ComboBox x:Name="CmbStatus" Grid.Row="10" Grid.Column="6" Grid.ColumnSpan="3"
+                          Style="{StaticResource FormComboBox}">
+                    <ComboBoxItem Content="Requested" IsSelected="True"/>
+                    <ComboBoxItem Content="Scheduled"/>
+                    <ComboBoxItem Content="Deployed"/>
+                    <ComboBoxItem Content="Failed"/>
+                    <ComboBoxItem Content="Rolled Back"/>
+                    <ComboBoxItem Content="Cancelled"/>
+                </ComboBox>
+            </Grid>
+        </Border>
+
+        <!-- Bottom action buttons -->
+        <StackPanel Grid.Row="3" Orientation="Horizontal" Margin="0,16,0,0">
+            <Button x:Name="BtnSubmit" Style="{StaticResource SubmitButton}" Click="BtnSubmit_Click" Margin="0,0,10,0">
+                <StackPanel Orientation="Horizontal">
+                    <TextBlock Text="✔" Margin="0,0,6,0"/>
+                    <TextBlock x:Name="SubmitButtonText" Text="Submit Request"/>
+                </StackPanel>
+            </Button>
+            <Button Content="Cancel" Style="{StaticResource SecondaryButton}" Click="BtnCancel_Click"/>
+        </StackPanel>
+    </Grid>
+</Window>
