@@ -1,5 +1,6 @@
 using System.Runtime.InteropServices;
 using System.Text;
+using System.Linq;
 
 namespace DeployApp.Helpers
 {
@@ -17,7 +18,7 @@ namespace DeployApp.Helpers
         private const int NameDisplay = 3;
 
         /// <summary>
-        /// Returns the Windows login username (e.g., "PLS7282" or "kirit").
+        /// Returns the Windows login username (e.g., "kirit").
         /// </summary>
         public static string GetCurrentUserId()
         {
@@ -65,6 +66,15 @@ namespace DeployApp.Helpers
             }
 
             return id;
+        }
+        /// <summary>
+        /// Checks if the current user is an admin.
+        /// </summary>
+        public static bool IsCurrentUserAdmin()
+        {
+            var adminUsers = new[] { "admin", "kirit" }; // Mock admin list, can be updated from config
+            var id = GetCurrentUserId();
+            return adminUsers.Contains(id, StringComparer.OrdinalIgnoreCase);
         }
     }
 }

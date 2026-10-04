@@ -145,6 +145,29 @@ namespace DeployApp.Services
                     insertCmd.ExecuteNonQuery();
                 }
             }
+
+            // --- AdminUsers table ---
+            if (!existingTables.Contains("AdminUsers"))
+            {
+                const string createSql = """
+                    CREATE TABLE AdminUsers (
+                        Id AUTOINCREMENT PRIMARY KEY,
+                        UserId TEXT(50)
+                    )
+                    """;
+                using var createCmd = new OleDbCommand(createSql, conn);
+                createCmd.ExecuteNonQuery();
+
+                // Seed with default admin users
+                var defaultAdmins = new[] { "admin", "pls7282", "kirit" };
+                foreach (var admin in defaultAdmins)
+                {
+                    using var insertCmd = new OleDbCommand(
+                        "INSERT INTO AdminUsers (UserId) VALUES (@UserId)", conn);
+                    insertCmd.Parameters.AddWithValue("@UserId", admin);
+                    insertCmd.ExecuteNonQuery();
+                }
+            }
         }
 
         /// <summary>
@@ -166,6 +189,23 @@ namespace DeployApp.Services
             }
 
             return requests;
+        }
+
+        /// <summary>
+        /// Checks if a user is an admin according to the AdminUsers table.
+        /// </summary>
+        public bool IsAdminUser(string userId)
+        {
+            using var conn = new OleDbConnection(_connectionString);
+            conn.Open();
+
+            using var cmd = new OleDbCommand("SELECT COUNT(*) FROM AdminUsers WHERE UserId = @UserId", conn);
+            cmd.Parameters.AddWithValue("@UserId", userId);
+            
+            var result = cmd.ExecuteScalar();
+            if (result == null || result == DBNull.Value) return false;
+            
+            return Convert.ToInt32(result) > 0;
         }
 
         /// <summary>

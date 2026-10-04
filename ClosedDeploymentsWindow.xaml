@@ -3,6 +3,7 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         Title="Closed Deployments - All Projects" Height="520" Width="1030"
         WindowStartupLocation="CenterOwner"
+        WindowState="Maximized"
         Background="{DynamicResource WindowBackgroundBrush}"
         Foreground="{DynamicResource TextPrimaryBrush}"
         ResizeMode="CanResizeWithGrip">
@@ -23,12 +24,15 @@
             </Grid.ColumnDefinitions>
             <TextBlock Grid.Column="0" Text="📦  Closed deployments across all RPAs"
                        Style="{StaticResource SectionHeader}" FontSize="18"/>
-            <Button Grid.Column="1" Style="{StaticResource SecondaryButton}" Click="BtnRefresh_Click">
-                <StackPanel Orientation="Horizontal">
-                    <TextBlock Text="↻" Margin="0,0,6,0"/>
-                    <TextBlock Text="Refresh"/>
-                </StackPanel>
-            </Button>
+            <StackPanel Grid.Column="1" Orientation="Horizontal">
+                <Button Style="{StaticResource SecondaryButton}" Click="BtnRefresh_Click" Margin="0,0,10,0">
+                    <StackPanel Orientation="Horizontal">
+                        <TextBlock Text="↻" Margin="0,0,6,0"/>
+                        <TextBlock Text="Refresh"/>
+                    </StackPanel>
+                </Button>
+                <Button Content="Close" Style="{StaticResource SecondaryButton}" Padding="24,7" Click="BtnClose_Click"/>
+            </StackPanel>
         </Grid>
 
         <!-- Subtitle -->
@@ -60,9 +64,5 @@
             </DataGrid.Columns>
         </DataGrid>
 
-        <!-- Bottom buttons -->
-        <StackPanel Grid.Row="3" Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,12,0,0">
-            <Button Content="Close" Style="{StaticResource SecondaryButton}" Padding="24,7" Click="BtnClose_Click"/>
-        </StackPanel>
     </Grid>
 </Window>

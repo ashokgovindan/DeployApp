@@ -34,6 +34,21 @@ namespace DeployApp
             DpRequestDate.SelectedDate = DateTime.Today;
             SubtitleText.Text = "Choose the RPA this deployment request belongs to.";
             SubmitButtonText.Text = "Submit Request";
+
+            DisableFridaysAndSaturdays();
+        }
+
+        private void DisableFridaysAndSaturdays()
+        {
+            var start = DateTime.Today.AddYears(-5);
+            var end = DateTime.Today.AddYears(10);
+            for (var d = start; d <= end; d = d.AddDays(1))
+            {
+                if (d.DayOfWeek == DayOfWeek.Friday || d.DayOfWeek == DayOfWeek.Saturday)
+                {
+                    DpChangeDate.BlackoutDates.Add(new CalendarDateRange(d));
+                }
+            }
         }
 
         /// <summary>

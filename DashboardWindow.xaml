@@ -1,0 +1,95 @@
+<Window x:Class="DeployApp.DashboardWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Dashboard" Height="600" Width="1000"
+        WindowStartupLocation="CenterOwner"
+        WindowState="Maximized"
+        Background="{DynamicResource WindowBackgroundBrush}"
+        Foreground="{DynamicResource TextPrimaryBrush}"
+        ResizeMode="CanResizeWithGrip">
+    <Grid Margin="20">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+        
+        <Grid Grid.Row="0" Margin="0,0,0,20">
+            <TextBlock Text="📈  Dashboard" Style="{StaticResource SectionHeader}" FontSize="24"/>
+            <Button Content="Close" Style="{StaticResource SecondaryButton}" Padding="24,7" Click="BtnClose_Click" HorizontalAlignment="Right"/>
+        </Grid>
+        
+        <Grid Grid.Row="1">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+
+            <!-- Summary Cards -->
+            <UniformGrid Grid.Row="0" Columns="4" Margin="0,0,0,20">
+                <!-- Card 1 -->
+                <Border Background="{DynamicResource SurfaceBrush}" BorderBrush="{DynamicResource BorderBrush}" BorderThickness="1" CornerRadius="8" Padding="20" Margin="0,0,10,0">
+                    <StackPanel>
+                        <TextBlock Text="TOTAL DEPLOYMENTS" Foreground="{DynamicResource TextSecondaryBrush}" FontSize="12" FontWeight="SemiBold" Margin="0,0,0,8"/>
+                        <TextBlock Text="1,284" Foreground="{DynamicResource TextPrimaryBrush}" FontSize="32" FontWeight="Bold"/>
+                        <TextBlock Text="+12% from last month" Foreground="{DynamicResource SuccessBrush}" FontSize="12" Margin="0,4,0,0"/>
+                    </StackPanel>
+                </Border>
+                <!-- Card 2 -->
+                <Border Background="{DynamicResource SurfaceBrush}" BorderBrush="{DynamicResource BorderBrush}" BorderThickness="1" CornerRadius="8" Padding="20" Margin="10,0,10,0">
+                    <StackPanel>
+                        <TextBlock Text="PENDING REQUESTS" Foreground="{DynamicResource TextSecondaryBrush}" FontSize="12" FontWeight="SemiBold" Margin="0,0,0,8"/>
+                        <TextBlock Text="42" Foreground="{DynamicResource TextPrimaryBrush}" FontSize="32" FontWeight="Bold"/>
+                        <TextBlock Text="Requires review" Foreground="Orange" FontSize="12" Margin="0,4,0,0"/>
+                    </StackPanel>
+                </Border>
+                <!-- Card 3 -->
+                <Border Background="{DynamicResource SurfaceBrush}" BorderBrush="{DynamicResource BorderBrush}" BorderThickness="1" CornerRadius="8" Padding="20" Margin="10,0,10,0">
+                    <StackPanel>
+                        <TextBlock Text="SUCCESS RATE" Foreground="{DynamicResource TextSecondaryBrush}" FontSize="12" FontWeight="SemiBold" Margin="0,0,0,8"/>
+                        <TextBlock Text="98.5%" Foreground="{DynamicResource TextPrimaryBrush}" FontSize="32" FontWeight="Bold"/>
+                        <TextBlock Text="Last 30 days" Foreground="{DynamicResource TextSecondaryBrush}" FontSize="12" Margin="0,4,0,0"/>
+                    </StackPanel>
+                </Border>
+                <!-- Card 4 -->
+                <Border Background="{DynamicResource SurfaceBrush}" BorderBrush="{DynamicResource BorderBrush}" BorderThickness="1" CornerRadius="8" Padding="20" Margin="10,0,0,0">
+                    <StackPanel>
+                        <TextBlock Text="FAILED DEPLOYMENTS" Foreground="{DynamicResource TextSecondaryBrush}" FontSize="12" FontWeight="SemiBold" Margin="0,0,0,8"/>
+                        <TextBlock Text="3" Foreground="{DynamicResource TextPrimaryBrush}" FontSize="32" FontWeight="Bold"/>
+                        <TextBlock Text="Down 2 from last month" Foreground="{DynamicResource SuccessBrush}" FontSize="12" Margin="0,4,0,0"/>
+                    </StackPanel>
+                </Border>
+            </UniformGrid>
+
+            <!-- Chart/Main area Placeholder -->
+            <Grid Grid.Row="1">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="2*"/>
+                    <ColumnDefinition Width="1*"/>
+                </Grid.ColumnDefinitions>
+
+                <Border Grid.Column="0" Background="{DynamicResource SurfaceBrush}" BorderBrush="{DynamicResource BorderBrush}" BorderThickness="1" CornerRadius="8" Margin="0,0,10,0" Padding="20">
+                    <StackPanel>
+                        <TextBlock Text="Deployments over Time" Style="{StaticResource SectionHeader}" Margin="0,0,0,20"/>
+                        <!-- Mock Chart Area -->
+                        <Grid Height="300">
+                            <TextBlock Text="[ Line Chart Placeholder ]" HorizontalAlignment="Center" VerticalAlignment="Center" Foreground="{DynamicResource TextSecondaryBrush}" FontSize="16"/>
+                        </Grid>
+                    </StackPanel>
+                </Border>
+
+                <Border Grid.Column="1" Background="{DynamicResource SurfaceBrush}" BorderBrush="{DynamicResource BorderBrush}" BorderThickness="1" CornerRadius="8" Margin="10,0,0,0" Padding="20">
+                    <StackPanel>
+                        <TextBlock Text="Recent Activity" Style="{StaticResource SectionHeader}" Margin="0,0,0,20"/>
+                        <StackPanel>
+                            <TextBlock Text="• RPA 'Agency' deployed to PROD" Margin="0,0,0,12" Foreground="{DynamicResource TextPrimaryBrush}"/>
+                            <TextBlock Text="• New CR created for 'Case Management'" Margin="0,0,0,12" Foreground="{DynamicResource TextPrimaryBrush}"/>
+                            <TextBlock Text="• Deployment failed for 'Document Processing'" Foreground="Red" Margin="0,0,0,12"/>
+                            <TextBlock Text="• EPAL approved by Admin" Margin="0,0,0,12" Foreground="{DynamicResource TextPrimaryBrush}"/>
+                            <TextBlock Text="• Schedule Creation updated" Margin="0,0,0,12" Foreground="{DynamicResource TextPrimaryBrush}"/>
+                        </StackPanel>
+                    </StackPanel>
+                </Border>
+            </Grid>
+        </Grid>
+    </Grid>
+</Window>

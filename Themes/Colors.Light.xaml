@@ -21,9 +21,9 @@
     <SolidColorBrush x:Key="GridLineBrush" Color="#E6ECF3"/>
     <SolidColorBrush x:Key="RowHoverBrush" Color="#F0F5FC"/>
     <SolidColorBrush x:Key="RowSelectedBrush" Color="#DCE9F8"/>
-    <SolidColorBrush x:Key="PrimaryButtonBrush" Color="#E88C00"/>
-    <SolidColorBrush x:Key="PrimaryButtonHoverBrush" Color="#D07E00"/>
-    <SolidColorBrush x:Key="PrimaryButtonPressedBrush" Color="#B86E00"/>
+    <SolidColorBrush x:Key="PrimaryButtonBrush" Color="#0B63CE"/>
+    <SolidColorBrush x:Key="PrimaryButtonHoverBrush" Color="#0A52AB"/>
+    <SolidColorBrush x:Key="PrimaryButtonPressedBrush" Color="#073B7A"/>
     <SolidColorBrush x:Key="PrimaryButtonForegroundBrush" Color="#FFFFFF"/>
     <SolidColorBrush x:Key="SubmitButtonBrush" Color="#28A745"/>
     <SolidColorBrush x:Key="SubmitButtonHoverBrush" Color="#218838"/>

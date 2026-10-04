@@ -33,6 +33,21 @@ namespace DeployApp
             InitializeDatabase();
             LoadDataFromDatabase();
             RefreshGrid();
+            ApplyUserRoles();
+        }
+
+        private void ApplyUserRoles()
+        {
+            var userId = UserHelper.GetCurrentUserId();
+            if (!_dbService.IsAdminUser(userId))
+            {
+                BtnEdit.Visibility = Visibility.Collapsed;
+                BtnRemoveSelected.Visibility = Visibility.Collapsed;
+                BtnCreateCR.Visibility = Visibility.Collapsed;
+                BtnCreateEPAL.Visibility = Visibility.Collapsed;
+                BtnClosedReport.Visibility = Visibility.Collapsed;
+                BtnDashboard.Visibility = Visibility.Collapsed;
+            }
         }
 
         /// <summary>
@@ -584,5 +599,10 @@ namespace DeployApp
         }
 
         #endregion
+        private void BtnDashboard_Click(object sender, RoutedEventArgs e)
+        {
+            var win = new DashboardWindow { Owner = this };
+            win.ShowDialog();
+        }
     }
 }
