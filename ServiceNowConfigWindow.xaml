@@ -14,6 +14,8 @@
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
@@ -26,11 +28,16 @@
         <TextBox x:Name="TxtInstanceUrl" Grid.Row="3" Style="{StaticResource FormTextBox}"
                  Tag="https://yourinstance.service-now.com"/>
 
-        <TextBlock Grid.Row="4" Style="{StaticResource SubtleText}" TextWrapping="Wrap" Margin="0,8,0,0"
+        <!-- Error Email -->
+        <TextBlock Grid.Row="4" Text="Error Notification Email" Style="{StaticResource FormLabel}" Margin="0,8,0,0"/>
+        <TextBox x:Name="TxtEmail" Grid.Row="5" Style="{StaticResource FormTextBox}"
+                 Tag="errors@yourdomain.com"/>
+
+        <TextBlock Grid.Row="6" Style="{StaticResource SubtleText}" TextWrapping="Wrap" Margin="0,8,0,0"
                    Text="You sign in to ServiceNow in the app's ServiceNow window. Your password is not stored here."/>
 
         <!-- Buttons -->
-        <StackPanel Grid.Row="6" Orientation="Horizontal" HorizontalAlignment="Right">
+        <StackPanel Grid.Row="8" Orientation="Horizontal" HorizontalAlignment="Right">
             <Button Style="{StaticResource SubmitButton}" Click="BtnSave_Click" Margin="0,0,10,0">
                 <StackPanel Orientation="Horizontal">
                     <TextBlock Text="✔" Margin="0,0,6,0"/>

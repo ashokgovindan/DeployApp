@@ -135,8 +135,25 @@ namespace DeployApp.Services
                     try
                     {
                         d.SwitchTo().DefaultContent();
-                        var frames = d.FindElements(By.Id("gsft_main"));
-                        if (frames.Count > 0) d.SwitchTo().Frame(frames[0]);
+                        var frameElement = ((IJavaScriptExecutor)d).ExecuteScript(@"
+                            function findFrame(root) {
+                                var iframes = root.querySelectorAll ? root.querySelectorAll('iframe') : [];
+                                for (var i = 0; i < iframes.length; i++) {
+                                    if (iframes[i].id === 'gsft_main') return iframes[i];
+                                }
+                                var all = root.querySelectorAll ? root.querySelectorAll('*') : [];
+                                for (var i = 0; i < all.length; i++) {
+                                    if (all[i].shadowRoot) {
+                                        var found = findFrame(all[i].shadowRoot);
+                                        if (found) return found;
+                                    }
+                                }
+                                return null;
+                            }
+                            return findFrame(document);
+                        ") as OpenQA.Selenium.IWebElement;
+                        
+                        if (frameElement != null) d.SwitchTo().Frame(frameElement);
 
                         var result = ((IJavaScriptExecutor)d).ExecuteScript(
                             "return (document.readyState === 'complete' && " +
@@ -211,13 +228,13 @@ namespace DeployApp.Services
                 if (ForceContinue)
                 {
                     ForceContinue = false; // Reset for subsequent requests
-                    try 
+                    
+                    // Since the user manually skipped the long wait, we just wait a short
+                    // time (e.g. 15 seconds) for the current page's form to fully load.
+                    if (!WaitForForm(TimeSpan.FromSeconds(15)))
                     {
-                        _driver?.SwitchTo().DefaultContent();
-                        var frames = _driver?.FindElements(By.Id("gsft_main"));
-                        if (frames != null && frames.Count > 0) _driver?.SwitchTo().Frame(frames[0]);
-                    } 
-                    catch { /* ignore */ }
+                        return Fail("Could not detect the form on the current page. Please ensure the page is fully loaded.");
+                    }
                 }
                 else
                 {
@@ -275,7 +292,7 @@ Is the Code pushed to Test (Yes/No): {request.CodeMovedToTest}
                 };
 
                 var sb = new StringBuilder();
-                sb.AppendLine("(function() { try {");
+                sb.AppendLine("return (function() { try {");
                 foreach (var kv in fields)
                 {
                     sb.AppendLine($"  if (g_form.hasField('{kv.Key}')) g_form.setValue('{kv.Key}', '{kv.Value}');");
@@ -305,7 +322,7 @@ Is the Code pushed to Test (Yes/No): {request.CodeMovedToTest}
                 // 3. Click Submit.
                 ReportStatus($"Submitting change request for {request.RpaName}...");
                 var clickResult = RunScript(@"
-                    (function() {
+                    return (function() {
                         try {
                             var button = document.getElementById('sysverb_insert') || document.getElementById('sysverb_insert_bottom');
                             if (button) { button.click(); return 'clicked'; }
@@ -330,7 +347,7 @@ Is the Code pushed to Test (Yes/No): {request.CodeMovedToTest}
                     return Fail("Submitted, but could not open the record to confirm it.");
 
                 var savedJson = RunScript(@"
-                    (function() {
+                    return (function() {
                         try { return JSON.stringify({ isNew: g_form.isNewRecord(), number: g_form.getValue('number') }); }
                         catch(e) { return JSON.stringify({ isNew: true, number: '' }); }
                     })()
@@ -371,7 +388,7 @@ Is the Code pushed to Test (Yes/No): {request.CodeMovedToTest}
             try
             {
                 var result = RunScript(@"
-                    (function() {
+                    return (function() {
                         try {
                             var nodes = document.querySelectorAll('.outputmsg_error, .fieldmsg.notification-error, .notification-error');
                             var seen = {}, list = [];
@@ -450,4 +467,6 @@ Is the Code pushed to Test (Yes/No): {request.CodeMovedToTest}
 
         #endregion
     }
-}
+}  
+
+

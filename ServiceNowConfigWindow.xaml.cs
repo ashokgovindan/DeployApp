@@ -21,11 +21,13 @@ namespace DeployApp
 
             var existing = ServiceNowService.LoadConfig();
             TxtInstanceUrl.Text = existing?.InstanceUrl ?? "https://dev203974.service-now.com";
+            TxtEmail.Text = existing?.EmailAddress ?? "";
         }
 
         private void BtnSave_Click(object sender, RoutedEventArgs e)
         {
             var url = TxtInstanceUrl.Text.Trim().TrimEnd('/');
+            var email = TxtEmail.Text.Trim();
 
             if (!Uri.TryCreate(url, UriKind.Absolute, out var uri) || uri.Scheme != Uri.UriSchemeHttps)
             {
@@ -35,7 +37,7 @@ namespace DeployApp
                 return;
             }
 
-            Result = new ServiceNowConfig { InstanceUrl = $"{uri.Scheme}://{uri.Host}" };
+            Result = new ServiceNowConfig { InstanceUrl = $"{uri.Scheme}://{uri.Host}", EmailAddress = email };
             ServiceNowService.SaveConfig(Result);
             DialogResult = true;
             Close();

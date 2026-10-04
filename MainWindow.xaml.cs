@@ -430,6 +430,26 @@ namespace DeployApp
                 "Create CR - Results",
                 MessageBoxButton.OK,
                 successCount == checkedItems.Count ? MessageBoxImage.Information : MessageBoxImage.Warning);
+
+            // Send email if there were errors and an email is configured
+            if (successCount < checkedItems.Count && !string.IsNullOrWhiteSpace(config.EmailAddress))
+            {
+                try
+                {
+                    var subject = Uri.EscapeDataString("DeployApp - Change Request Errors");
+                    var body = Uri.EscapeDataString($"The following errors occurred while creating Change Requests:\n\n{results}");
+                    var startInfo = new System.Diagnostics.ProcessStartInfo
+                    {
+                        FileName = $"mailto:{config.EmailAddress}?subject={subject}&body={body}",
+                        UseShellExecute = true
+                    };
+                    System.Diagnostics.Process.Start(startInfo);
+                }
+                catch
+                {
+                    // Ignore mailto errors
+                }
+            }
         }
 
         #endregion

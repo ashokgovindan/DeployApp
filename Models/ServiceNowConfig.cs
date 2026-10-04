@@ -12,5 +12,8 @@ namespace DeployApp.Models
     {
         [JsonPropertyName("instanceUrl")]
         public string InstanceUrl { get; set; } = string.Empty;
+
+        [JsonPropertyName("emailAddress")]
+        public string EmailAddress { get; set; } = string.Empty;
     }
 }
