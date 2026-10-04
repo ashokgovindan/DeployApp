@@ -152,7 +152,9 @@ namespace DeployApp.Services
                             }
                             return findFrame(document);
                         ") as OpenQA.Selenium.IWebElement;
-                        
+
+                        if (frameElement != null) d.SwitchTo().Frame(frameElement);
+
                         if (frameElement != null) d.SwitchTo().Frame(frameElement);
 
                         var result = ((IJavaScriptExecutor)d).ExecuteScript(
@@ -204,7 +206,7 @@ namespace DeployApp.Services
             NavigateTo(NewFormUrl);
 
             ReportStatus("Waiting for the New Change Request form... (Please sign in or navigate to the form if needed)");
-            
+
             // Wait up to 15 minutes for the user to sign in and/or navigate to the New Record form.
             if (!WaitForForm(TimeSpan.FromMinutes(15)))
             {
@@ -228,7 +230,7 @@ namespace DeployApp.Services
                 if (ForceContinue)
                 {
                     ForceContinue = false; // Reset for subsequent requests
-                    
+
                     // Since the user manually skipped the long wait, we just wait a short
                     // time (e.g. 15 seconds) for the current page's form to fully load.
                     if (!WaitForForm(TimeSpan.FromSeconds(15)))
@@ -240,7 +242,7 @@ namespace DeployApp.Services
                 {
                     // 1. Check if we are already on a new Change Request form
                     bool isAlreadyOnNewForm = false;
-                    try 
+                    try
                     {
                         var checkNew = RunScript("return typeof g_form !== 'undefined' ? g_form.isNewRecord() : false;");
                         isAlreadyOnNewForm = checkNew is true;
@@ -471,7 +473,7 @@ Is the Code pushed to Test (Yes/No): {request.CodeMovedToTest}
             try
             {
                 ReportStatus($"Opening EPAL form for {request.RpaName}...");
-                
+
                 if (!ForceContinue)
                 {
                     NavigateTo(epalUrl);
@@ -547,7 +549,7 @@ Is the Code pushed to Test (Yes/No): {request.CodeMovedToTest}
                 SetSelect2Field("Cloud - Environment", "Production");
 
                 ReportStatus($"Please complete the form and Submit for {request.RpaName}. Waiting...");
-                
+
                 // Wait for user to submit (URL changes) or click Start Filling to force continue
                 string initialUrl = _driver.Url;
                 while (!IsClosed)
@@ -557,7 +559,7 @@ Is the Code pushed to Test (Yes/No): {request.CodeMovedToTest}
                         ForceContinue = false;
                         break;
                     }
-                    
+
                     try
                     {
                         string currentUrl = _driver.Url;
@@ -566,7 +568,7 @@ Is the Code pushed to Test (Yes/No): {request.CodeMovedToTest}
                         {
                             break;
                         }
-                        
+
                         // Check for order success message in Service Portal
                         var successMsg = RunScript("return document.body.innerText.indexOf('Thank you, your request has been submitted') > -1;");
                         if (successMsg is true)

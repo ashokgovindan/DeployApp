@@ -9,17 +9,16 @@
 
     <Grid Margin="24,20,24,20">
         <Grid.RowDefinitions>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="16"/>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="*"/>
-            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/> <!-- 0: Title -->
+            <RowDefinition Height="16"/>   <!-- 1: Spacing -->
+            <RowDefinition Height="Auto"/> <!-- 2: Inst Label -->
+            <RowDefinition Height="Auto"/> <!-- 3: Inst TextBox -->
+            <RowDefinition Height="Auto"/> <!-- 4: EPAL Label -->
+            <RowDefinition Height="Auto"/> <!-- 5: EPAL TextBox -->
+            <RowDefinition Height="Auto"/> <!-- 6: Email Label -->
+            <RowDefinition Height="Auto"/> <!-- 7: Email TextBox -->
+            <RowDefinition Height="*"/>    <!-- 8: Info Text & spacing -->
+            <RowDefinition Height="Auto"/> <!-- 9: Buttons -->
         </Grid.RowDefinitions>
 
         <!-- Title -->
@@ -38,13 +37,13 @@
         <!-- Error Email -->
         <TextBlock Grid.Row="6" Text="Error Notification Email" Style="{StaticResource FormLabel}" Margin="0,8,0,0"/>
         <TextBox x:Name="TxtEmail" Grid.Row="7" Style="{StaticResource FormTextBox}"
-                 Tag="errors@yourdomain.com"/>
+                 Tag="errors@yourdomain.com" />
 
-        <TextBlock Grid.Row="8" Style="{StaticResource SubtleText}" TextWrapping="Wrap" Margin="0,8,0,0"
+        <TextBlock Grid.Row="8" Style="{StaticResource SubtleText}" TextWrapping="Wrap" VerticalAlignment="Bottom" Margin="0,16,0,16"
                    Text="You sign in to ServiceNow in the app's ServiceNow window. Your password is not stored here."/>
 
         <!-- Buttons -->
-        <StackPanel Grid.Row="10" Orientation="Horizontal" HorizontalAlignment="Right">
+        <StackPanel Grid.Row="9" Orientation="Horizontal" HorizontalAlignment="Right">
             <Button Style="{StaticResource SubmitButton}" Click="BtnSave_Click" Margin="0,0,10,0">
                 <StackPanel Orientation="Horizontal">
                     <TextBlock Text="✔" Margin="0,0,6,0"/>

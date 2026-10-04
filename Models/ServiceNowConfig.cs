@@ -12,6 +12,7 @@ namespace DeployApp.Models
     {
         [JsonPropertyName("instanceUrl")]
         public string InstanceUrl { get; set; } = string.Empty;
+
         [JsonPropertyName("epalUrl")]
         public string EpalUrl { get; set; } = string.Empty;
 

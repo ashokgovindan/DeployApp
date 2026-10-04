@@ -4,6 +4,7 @@
         Title="ServiceNow" Height="260" Width="620"
         MinHeight="220" MinWidth="500"
         WindowStartupLocation="CenterOwner"
+        WindowState="Maximized"
         ResizeMode="NoResize"
         Background="{DynamicResource WindowBackgroundBrush}"
         Foreground="{DynamicResource TextPrimaryBrush}">

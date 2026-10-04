@@ -1,5 +1,6 @@
 using System.Runtime.InteropServices;
 using System.Text;
+using System.Linq;
 
 namespace DeployApp.Helpers
 {
@@ -65,6 +66,15 @@ namespace DeployApp.Helpers
             }
 
             return id;
+        }
+        /// <summary>
+        /// Checks if the current user is an admin.
+        /// </summary>
+        public static bool IsCurrentUserAdmin()
+        {
+            var adminUsers = new[] { "admin", "pls7282", "kirit" }; // Mock admin list, can be updated from config
+            var id = GetCurrentUserId();
+            return adminUsers.Contains(id, StringComparer.OrdinalIgnoreCase);
         }
     }
 }
