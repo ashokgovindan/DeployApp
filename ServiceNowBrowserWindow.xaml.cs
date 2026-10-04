@@ -17,7 +17,7 @@ namespace DeployApp
     /// </summary>
     public partial class ServiceNowBrowserWindow : Window
     {
-        private readonly SeleniumChromeService _chrome;
+        private SeleniumChromeServiceBase? _chrome;
         private readonly string _instanceUrl;
 
         /// <summary>True once the user has closed this window.</summary>
@@ -27,8 +27,7 @@ namespace DeployApp
         {
             InitializeComponent();
             _instanceUrl = instanceUrl.Trim().TrimEnd('/');
-            _chrome = new SeleniumChromeService(_instanceUrl);
-            _chrome.OnStatusChanged = text => Dispatcher.Invoke(() => SetStatus(text));
+
 
             // Show the ServiceNow URL so the user can copy it for testing.
             TxtUrl.Text = _instanceUrl;
@@ -36,7 +35,7 @@ namespace DeployApp
             Closed += (_, _) =>
             {
                 IsClosed = true;
-                _chrome.Dispose();
+                _chrome?.Dispose();
             };
         }
 
@@ -73,7 +72,7 @@ namespace DeployApp
         {
             BtnStartFilling.IsEnabled = false;
             BtnStartFilling.Content = "Starting...";
-            _chrome.ForceContinue = true;
+            if (_chrome != null) _chrome.ForceContinue = true;
         }
 
         #region Chrome lifecycle
@@ -81,8 +80,15 @@ namespace DeployApp
         /// <summary>
         /// Launches Chrome and opens ServiceNow. No WebView2 is used.
         /// </summary>
-        public async Task InitializeAsync()
+        public async Task InitializeAsync(bool isEpal = false)
         {
+            if (isEpal)
+                _chrome = new CreateEpalChromeService(_instanceUrl);
+            else
+                _chrome = new CreateCRChromeService(_instanceUrl);
+
+            _chrome.OnStatusChanged = text => Dispatcher.Invoke(() => SetStatus(text));
+
             SetStatus("Launching Chrome...");
             await Task.Run(() => _chrome.Launch());
             SetStatus("Chrome is running.");
@@ -97,7 +103,9 @@ namespace DeployApp
                 "%3Fsys_id%3D-1%26sysparm_query%3Dchg_model%3D007c4001c343101035ae3f52c1d3aeb2";
             Dispatcher.Invoke(() => SetUrl(formUrl));
             SetStatus("Opening ServiceNow in Chrome — sign in if prompted...");
-            return await Task.Run(() => _chrome.EnsureSignedIn());
+            if (_chrome is CreateCRChromeService crService)
+                return await Task.Run(() => crService.EnsureSignedIn());
+            return false;
         }
 
         /// <summary>
@@ -108,7 +116,9 @@ namespace DeployApp
             var formUrl = $"{_instanceUrl}/now/nav/ui/classic/params/target/change_request.do" +
                 "%3Fsys_id%3D-1%26sysparm_query%3Dchg_model%3D007c4001c343101035ae3f52c1d3aeb2";
             Dispatcher.Invoke(() => SetUrl(formUrl));
-            return await Task.Run(() => _chrome.CreateChangeRequest(request));
+            if (_chrome is CreateCRChromeService crService)
+                return await Task.Run(() => crService.CreateChangeRequest(request));
+            return new ServiceNowResult { Success = false, Message = "Not initialized for CR." };
         }
 
         /// <summary>
@@ -117,7 +127,9 @@ namespace DeployApp
         public async Task<ServiceNowResult> CreateEpalAsync(DeploymentRequest request, string epalUrl)
         {
             Dispatcher.Invoke(() => SetUrl(epalUrl));
-            return await Task.Run(() => _chrome.CreateEpal(request, epalUrl));
+            if (_chrome is CreateEpalChromeService epalService)
+                return await Task.Run(() => epalService.CreateEpal(request, epalUrl));
+            return new ServiceNowResult { Success = false, Message = "Not initialized for EPAL." };
         }
 
         #endregion

@@ -8,11 +8,17 @@
     <UseWPF>true</UseWPF>
     <!-- Pre-theme backup copies. Not part of the build. -->
     <DefaultItemExcludes>$(DefaultItemExcludes);_backup_before_themes\**</DefaultItemExcludes>
-    <ApplicationIcon>app.ico</ApplicationIcon>
+    <ApplicationIcon>RPA_Icon.ico</ApplicationIcon>
+    <StartupObject>DeployApp.App</StartupObject>
   </PropertyGroup>
 
   <ItemGroup>
+    <Content Include="RPA_Icon.ico" />
+  </ItemGroup>
+
+  <ItemGroup>
     <Resource Include="app.ico" />
+    <Resource Include="RPA_Icon2 copy.jpg" />
   </ItemGroup>
 
   <ItemGroup>

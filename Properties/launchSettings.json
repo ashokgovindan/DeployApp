@@ -1,0 +1,11 @@
+{
+  "profiles": {
+    "DeployApp": {
+      "commandName": "Project"
+    },
+    "Profile 1": {
+      "commandName": "Executable",
+      "executablePath": "C:\\Users\\kirit\\source\\repos\\DeployApp\\ServiceNowChangeAutomation.cs"
+    }
+  }
+}

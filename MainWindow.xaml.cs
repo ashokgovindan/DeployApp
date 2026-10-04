@@ -524,7 +524,7 @@ namespace DeployApp
             {
                 try
                 {
-                    await browser.InitializeAsync();
+                    await browser.InitializeAsync(isEpal: true);
                 }
                 catch (Exception ex)
                 {
