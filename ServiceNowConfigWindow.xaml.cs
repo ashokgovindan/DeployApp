@@ -21,21 +21,25 @@ namespace DeployApp
 
             var existing = ServiceNowService.LoadConfig();
             TxtInstanceUrl.Text = existing?.InstanceUrl ?? "https://dev203974.service-now.com";
+            TxtEpalUrl.Text = existing?.EpalUrl ?? "";
+            TxtEmail.Text = existing?.EmailAddress ?? "";
         }
 
         private void BtnSave_Click(object sender, RoutedEventArgs e)
         {
             var url = TxtInstanceUrl.Text.Trim().TrimEnd('/');
+            var epalUrl = TxtEpalUrl.Text.Trim();
+            var email = TxtEmail.Text.Trim();
 
-            if (!Uri.TryCreate(url, UriKind.Absolute, out var uri) || uri.Scheme != Uri.UriSchemeHttps)
+            if (!Uri.TryCreate(url, UriKind.Absolute, out var uri) || (uri.Scheme != Uri.UriSchemeHttps && uri.Scheme != Uri.UriSchemeHttp))
             {
-                MessageBox.Show("Please enter the full instance address, starting with https://",
+                MessageBox.Show("Please enter the full instance address, starting with http:// or https://",
                     "Validation", MessageBoxButton.OK, MessageBoxImage.Warning);
                 TxtInstanceUrl.Focus();
                 return;
             }
 
-            Result = new ServiceNowConfig { InstanceUrl = $"{uri.Scheme}://{uri.Host}" };
+            Result = new ServiceNowConfig { InstanceUrl = url, EpalUrl = epalUrl, EmailAddress = email };
             ServiceNowService.SaveConfig(Result);
             DialogResult = true;
             Close();

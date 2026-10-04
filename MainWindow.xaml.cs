@@ -308,9 +308,12 @@ namespace DeployApp
         {
             var checkedItems = GetCheckedRequests();
 
+            // Filter out items that already have a Change Number
+            checkedItems = checkedItems.Where(r => string.IsNullOrWhiteSpace(r.ChangeNumber)).ToList();
+
             if (checkedItems.Count == 0)
             {
-                MessageBox.Show("Please check one or more deployment requests to create a Change Request.",
+                MessageBox.Show("Please check one or more deployment requests that do not already have a Change Number.",
                     "Create CR", MessageBoxButton.OK, MessageBoxImage.Information);
                 return;
             }
@@ -430,6 +433,26 @@ namespace DeployApp
                 "Create CR - Results",
                 MessageBoxButton.OK,
                 successCount == checkedItems.Count ? MessageBoxImage.Information : MessageBoxImage.Warning);
+
+            // Send email if there were errors and an email is configured
+            if (successCount < checkedItems.Count && !string.IsNullOrWhiteSpace(config.EmailAddress))
+            {
+                try
+                {
+                    var subject = Uri.EscapeDataString("DeployApp - Change Request Errors");
+                    var body = Uri.EscapeDataString($"The following errors occurred while creating Change Requests:\n\n{results}");
+                    var startInfo = new System.Diagnostics.ProcessStartInfo
+                    {
+                        FileName = $"mailto:{config.EmailAddress}?subject={subject}&body={body}",
+                        UseShellExecute = true
+                    };
+                    System.Diagnostics.Process.Start(startInfo);
+                }
+                catch
+                {
+                    // Ignore mailto errors
+                }
+            }
         }
 
         #endregion
@@ -441,10 +464,123 @@ namespace DeployApp
 
         #region Create EPAL (Placeholder)
 
-        private void BtnCreateEPAL_Click(object sender, RoutedEventArgs e)
+        private async void BtnCreateEPAL_Click(object sender, RoutedEventArgs e)
         {
-            MessageBox.Show("Create EPAL functionality is not yet implemented.",
-                "Create EPAL", MessageBoxButton.OK, MessageBoxImage.Information);
+            var checkedItems = GetCheckedRequests();
+
+            if (checkedItems.Count == 0)
+            {
+                MessageBox.Show("Please check one or more deployment requests to create an EPAL.",
+                    "Create EPAL", MessageBoxButton.OK, MessageBoxImage.Information);
+                return;
+            }
+
+            var missingChangeNum = checkedItems.Where(r => string.IsNullOrWhiteSpace(r.ChangeNumber)).ToList();
+            if (missingChangeNum.Count > 0)
+            {
+                var names = string.Join("\n", missingChangeNum.Select(r => $"  • {r.RpaName} ({r.Deployment})"));
+                MessageBox.Show(
+                    $"The following requests are missing a Change Number (required for EPAL):\n\n{names}\n\nPlease create Change Requests for these first.",
+                    "Missing Change Number", MessageBoxButton.OK, MessageBoxImage.Warning);
+                return;
+            }
+
+            var config = ServiceNowService.LoadConfig();
+            if (config == null || string.IsNullOrWhiteSpace(config.EpalUrl))
+            {
+                var configDialog = new ServiceNowConfigWindow { Owner = this };
+                if (configDialog.ShowDialog() != true || configDialog.Result == null || string.IsNullOrWhiteSpace(configDialog.Result.EpalUrl))
+                    return;
+                config = configDialog.Result;
+            }
+
+            var confirmMsg = $"Create {checkedItems.Count} EPAL(s)?\n\nEPAL URL: {config.EpalUrl}";
+            if (MessageBox.Show(confirmMsg, "Confirm EPAL Creation", MessageBoxButton.YesNo, MessageBoxImage.Question) != MessageBoxResult.Yes)
+                return;
+
+            var browser = new ServiceNowBrowserWindow(config.InstanceUrl) { Owner = this };
+            browser.Show();
+            IsEnabled = false;
+
+            var results = new StringBuilder();
+            int successCount = 0;
+
+            try
+            {
+                try
+                {
+                    await browser.InitializeAsync();
+                }
+                catch (Exception ex)
+                {
+                    browser.Close();
+                    MessageBox.Show($"Could not launch Chrome.\n\n{ex.Message}", "Create EPAL", MessageBoxButton.OK, MessageBoxImage.Error);
+                    return;
+                }
+
+                for (int i = 0; i < checkedItems.Count; i++)
+                {
+                    var request = checkedItems[i];
+                    if (browser.IsClosed)
+                    {
+                        results.AppendLine($"✘ {request.RpaName}: Skipped. Chrome closed.");
+                        continue;
+                    }
+
+                    browser.Title = $"ServiceNow - EPAL {i + 1} of {checkedItems.Count}";
+                    browser.SetProgress($"Processing {i + 1} of {checkedItems.Count}: {request.RpaName}");
+                    var result = await browser.CreateEpalAsync(request, config.EpalUrl);
+
+                    if (result.Success)
+                    {
+                        successCount++;
+                        
+                        try
+                        {
+                            _dbService.Update(request);
+                        }
+                        catch { /* best effort */ }
+
+                        string msg = $"✔ {request.RpaName}";
+                        if (!string.IsNullOrEmpty(request.RitmNumber))
+                            msg += $" ({request.RitmNumber})";
+                        results.AppendLine(msg);
+                    }
+                    else
+                    {
+                        results.AppendLine($"✘ {request.RpaName}: {result.Message}");
+                    }
+                }
+
+                if (!browser.IsClosed)
+                {
+                    browser.Title = "ServiceNow";
+                    browser.SetStatus($"Done. {successCount} of {checkedItems.Count} EPAL(s) created.");
+                    browser.SetProgress("Complete.");
+                }
+            }
+            finally
+            {
+                IsEnabled = true;
+                RefreshGrid();
+            }
+
+            MessageBox.Show($"Results: {successCount}/{checkedItems.Count} created successfully.\n\n{results}", "Create EPAL - Results", MessageBoxButton.OK, successCount == checkedItems.Count ? MessageBoxImage.Information : MessageBoxImage.Warning);
+            
+            if (successCount < checkedItems.Count && !string.IsNullOrWhiteSpace(config.EmailAddress))
+            {
+                try
+                {
+                    var subject = Uri.EscapeDataString("DeployApp - EPAL Errors");
+                    var body = Uri.EscapeDataString($"The following errors occurred while creating EPALs:\n\n{results}");
+                    System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo
+                    {
+                        FileName = $"mailto:{config.EmailAddress}?subject={subject}&body={body}",
+                        UseShellExecute = true
+                    });
+                }
+                catch { }
+            }
         }
 
         #endregion

@@ -111,6 +111,15 @@ namespace DeployApp
             return await Task.Run(() => _chrome.CreateChangeRequest(request));
         }
 
+        /// <summary>
+        /// Fills in a new EPAL form and submits it.
+        /// </summary>
+        public async Task<ServiceNowResult> CreateEpalAsync(DeploymentRequest request, string epalUrl)
+        {
+            Dispatcher.Invoke(() => SetUrl(epalUrl));
+            return await Task.Run(() => _chrome.CreateEpal(request, epalUrl));
+        }
+
         #endregion
     }
 }
