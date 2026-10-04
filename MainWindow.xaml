@@ -4,7 +4,7 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         mc:Ignorable="d"
-        Title="Deployment Manager"
+        Title="Deployment Manager" Icon="pack://application:,,,/app.ico"
         Height="580" Width="1180"
         MinHeight="400" MinWidth="1100"
         WindowStartupLocation="CenterScreen"

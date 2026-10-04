@@ -4,6 +4,7 @@
         Title="Dashboard" Height="600" Width="1000"
         WindowStartupLocation="CenterOwner"
         WindowState="Maximized"
+        Icon="pack://application:,,,/app.ico"
         Background="{DynamicResource WindowBackgroundBrush}"
         Foreground="{DynamicResource TextPrimaryBrush}"
         ResizeMode="CanResizeWithGrip">

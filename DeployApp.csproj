@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <OutputType>WinExe</OutputType>
@@ -8,7 +8,12 @@
     <UseWPF>true</UseWPF>
     <!-- Pre-theme backup copies. Not part of the build. -->
     <DefaultItemExcludes>$(DefaultItemExcludes);_backup_before_themes\**</DefaultItemExcludes>
+    <ApplicationIcon>app.ico</ApplicationIcon>
   </PropertyGroup>
+
+  <ItemGroup>
+    <Resource Include="app.ico" />
+  </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="Selenium.WebDriver" Version="4.50.0" />
